@@ -1,0 +1,27 @@
+index:
+    path: /
+    controller: App\Controller\IndexController::indexAction
+
+createEmail:
+   path: /email/create
+   controller: App\Controller\EmailController::createMail
+
+newEmail:
+   path: /email/new
+   controller: App\Controller\EmailController::newMail
+
+reply:
+   path: /email/reply
+   controller: App\Controller\EmailController::reply   
+
+view:
+   path: /email/show
+   controller: App\Controller\EmailController::show
+   
+inbox:
+   path: /email/inbox
+   controller: App\Controller\EmailController::inbox
+   
+outbox:
+   path: /email/outbox
+   controller: App\Controller\EmailController::outbox   
