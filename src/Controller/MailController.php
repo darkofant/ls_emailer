@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Mail;
+use App\Entity\Account;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,22 +47,46 @@ class MailController extends AbstractController
         $subject = $data['subject'];
         $text = $data['text'];
         $datetime = $_SERVER['REQUEST_TIME'];
-       
-        $outgoingMail = new Mail();
-        $outgoingMail -> setSender($sender);
-        $outgoingMail -> setRecipients($recipients);
-        $outgoingMail -> setSubject($subject);
-        $outgoingMail -> setText($text); 
-        $outgoingMail -> setDatetime($datetime); 
-        $outgoingMail -> setNew(false); 
-        $outgoingMail -> setType(1); 
-        $outgoingMail -> setAccountId($this->account_id);
         
-        $this->em->persist($outgoingMail);
-        $this->em->flush();
-        $data = $this->serializer->serialize($outgoingMail, JsonEncoder::FORMAT);
+        $r_account = $this->em->getRepository(Account::class)->findBy(['email_address' => $recipients])[0];   
         
-        return new JsonResponse($data, Response::HTTP_CREATED, [], true);
+        
+        if ($r_account) {
+            
+            $outgoingMail = new Mail();
+            $outgoingMail -> setSender($sender);
+            $outgoingMail -> setRecipients($recipients);
+            $outgoingMail -> setSubject($subject);
+            $outgoingMail -> setText($text); 
+            $outgoingMail -> setDatetime($datetime); 
+            $outgoingMail -> setNew(false); 
+            $outgoingMail -> setType(1); 
+            $outgoingMail -> setAccountId($this->account_id);
+            
+            $this->em->persist($outgoingMail);
+            $this->em->flush();
+            
+            $mail = new Mail();
+            $mail -> setSender($sender);
+            $mail -> setRecipients($recipients);
+            $mail -> setSubject($subject);
+            $mail -> setText($text);
+            $mail -> setDatetime($datetime);
+            $mail -> setNew(true);
+            $mail -> setType(0);
+            
+            $mail -> setAccountId($r_account.id);
+            
+            $this->em->persist($mail);
+            $this->em->flush();
+            
+            
+            $data = $this->serializer->serialize($outgoingMail, JsonEncoder::FORMAT);
+        
+            return new JsonResponse($data, Response::HTTP_CREATED, [], true);
+        }else {
+            return new JsonResponse('', Response::HTTP_BAD_REQUEST, [], true);
+        }
     }
 
     public function inboxAction(): JsonResponse
