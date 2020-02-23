@@ -37,10 +37,22 @@ class MailController extends AbstractController
     public function createAction(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        
+        $sender = $data['sender'];
+        $recipients = $data['recipients'];
+        $subject = $data['subject'];
         $text = $data['text'];
+        $datetime = $_SERVER['REQUEST_TIME'];
        
         $outgoingMail = new Mail();
-        $outgoingMail -> setText($text);        
+        $outgoingMail -> setSender($sender);
+        $outgoingMail -> setRecipients($recipients);
+        $outgoingMail -> setSubject($subject);
+        $outgoingMail -> setText($text); 
+        $outgoingMail -> setDatetime($datetime); 
+        $outgoingMail -> setNew(false); 
+        $outgoingMail -> setType(1); 
+        
         $this->em->persist($outgoingMail);
         $this->em->flush();
         $data = $this->serializer->serialize($outgoingMail, JsonEncoder::FORMAT);
