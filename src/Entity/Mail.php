@@ -47,11 +47,6 @@ class Mail
     private $datetime;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $new;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $sender;
@@ -60,6 +55,11 @@ class Mail
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $recipients;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $status;
 
     public function getId(): ?int
     {
@@ -150,14 +150,14 @@ class Mail
         return $this;
     }
 
-    public function getNew(): ?bool
+    public function getStatus(): ?int
     {
-        return $this->new;
+        return $this->status;
     }
 
-    public function setNew(?bool $new): self
+    public function setStatus(?int $status): self
     {
-        $this->new = $new;
+        $this->status = $status;
 
         return $this;
     }

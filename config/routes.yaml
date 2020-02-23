@@ -8,4 +8,8 @@ inbox:
     
 outbox:
     path: /api/mails/outbox
-    controller: App\Controller\MailController::outboxAction          
+    controller: App\Controller\MailController::outboxAction  
+
+recyclebin:
+    path: /api/mails/recyclebin
+    controller: App\Controller\MailController::outboxAction               

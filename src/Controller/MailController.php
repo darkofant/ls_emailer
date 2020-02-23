@@ -59,7 +59,7 @@ class MailController extends AbstractController
             $outgoingMail -> setSubject($subject);
             $outgoingMail -> setText($text); 
             $outgoingMail -> setDatetime($datetime); 
-            $outgoingMail -> setNew(false); 
+            $outgoingMail -> setStatus(1); 
             $outgoingMail -> setType(1); 
             $outgoingMail -> setAccountId($this->account_id);
             
@@ -72,7 +72,7 @@ class MailController extends AbstractController
             $mail -> setSubject($subject);
             $mail -> setText($text);
             $mail -> setDatetime($datetime);
-            $mail -> setNew(true);
+            $mail -> setStatus(0);
             $mail -> setType(0);
             
             $mail -> setAccountId($r_account.id);
@@ -91,7 +91,7 @@ class MailController extends AbstractController
 
     public function inboxAction(): JsonResponse
     {
-        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 0, 'account_id' => $this->account_id], ['datetime' => 'DESC']);
+        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 0, 'account_id' => $this->account_id, 'status' => [0,1]], ['datetime' => 'DESC']);
         $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);
@@ -99,7 +99,15 @@ class MailController extends AbstractController
     
     public function outboxAction(): JsonResponse
     {
-        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1, 'account_id' => $this->account_id], ['datetime' => 'DESC']);
+        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1, 'account_id' => $this->account_id, 'status' => [0,1]], ['datetime' => 'DESC']);
+        $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
+        
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
+    
+    public function recylebinAction(): JsonResponse
+    {
+        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1, 'account_id' => $this->account_id, 'status' => 2], ['datetime' => 'DESC']);
         $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);
