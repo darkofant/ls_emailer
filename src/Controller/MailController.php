@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class MailController extends AbstractController
 {
@@ -24,10 +25,12 @@ class MailController extends AbstractController
     private $serializer;
 
 
-    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer)
+    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer, SessionInterface $session)
     {
         $this->em = $em;
         $this->serializer = $serializer;
+        $this->session = $session;
+        $this->account_id = $this->session->get('account_id');
     }
     
     /**
@@ -52,6 +55,7 @@ class MailController extends AbstractController
         $outgoingMail -> setDatetime($datetime); 
         $outgoingMail -> setNew(false); 
         $outgoingMail -> setType(1); 
+        $outgoingMail -> setAccountId($this->account_id);
         
         $this->em->persist($outgoingMail);
         $this->em->flush();
@@ -62,7 +66,7 @@ class MailController extends AbstractController
 
     public function inboxAction(): JsonResponse
     {
-        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 0], ['datetime' => 'DESC']);
+        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 0, 'account_id' => $this->account_id], ['datetime' => 'DESC']);
         $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);
@@ -70,7 +74,7 @@ class MailController extends AbstractController
     
     public function outboxAction(): JsonResponse
     {
-        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1], ['datetime' => 'DESC']);
+        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1, 'account_id' => $this->account_id], ['datetime' => 'DESC']);
         $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);
