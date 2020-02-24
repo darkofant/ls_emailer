@@ -10,6 +10,6 @@ outbox:
     path: /api/mails/outbox
     controller: App\Controller\MailController::outboxAction  
 
-recyclebin:
-    path: /api/mails/recyclebin
-    controller: App\Controller\MailController::outboxAction               
+trash:
+    path: /api/mails/trash
+    controller: App\Controller\MailController::trashAction               

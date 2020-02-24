@@ -105,7 +105,7 @@ class MailController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
     
-    public function recylebinAction(): JsonResponse
+    public function trashAction(): JsonResponse
     {
         $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1, 'account_id' => $this->account_id, 'status' => 2], ['datetime' => 'DESC']);
         $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
