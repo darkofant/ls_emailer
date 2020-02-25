@@ -65,22 +65,17 @@
         computed: {
             unreadMessages() {
                 return this.messages.filter(function(message) {
-                    return (message.type == 'incoming' && !message.isRead && !message.isDeleted);
+                    return (message.type == 0 && message.status == 0);
                 });
             },
             sentMessages() {
                 return this.messages.filter(function(message) {
-                    return (message.type == 'outgoing' && !message.isDeleted);
-                });
-            },
-            importantMessages() {
-                return this.messages.filter(function(message) {
-                    return (message.type == 'incoming' && message.isImportant === true && !message.isDeleted);
+                    return (message.type == 1 && !message.status == 2);
                 });
             },
             trashedMessages() {
                 return this.messages.filter(function(message) {
-                    return message.isDeleted === true;
+                    return message.status == 2;
                 });
             }
         },

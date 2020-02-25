@@ -22,7 +22,7 @@ final class Version20200222222458 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE mail ADD datetime TIME DEFAULT NULL, ADD new TINYINT(1) DEFAULT NULL, CHANGE text text LONGTEXT DEFAULT NULL');
+        $this->addSql('ALTER TABLE mail ADD datetime DATETIME DEFAULT NULL, ADD new TINYINT(1) DEFAULT NULL, CHANGE text text LONGTEXT DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void

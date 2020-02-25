@@ -55,18 +55,8 @@
         methods: {
             sendMessage() {
                 eventBus.$emit('sentMessage', {
-                    message: {
                         subject: this.message.subject,
-                        content: this.message.content,
-                        isDeleted: false,
-                        type: 'outgoing',
-                        date: moment(),
-                        from: {
-                            name: 'Mohamed Jabrane',
-                            email: 'jabrane@gmail.exemple'
-                        },
-                        attachments: []
-                    }
+                        text: this.message.content            
                 });
             }
         }

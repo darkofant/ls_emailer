@@ -40,6 +40,7 @@ class MailController extends AbstractController
 
     public function createAction(Request $request): JsonResponse
     {
+
         $data = json_decode($request->getContent(), true);
         
         $sender = $data['sender'];
@@ -88,6 +89,14 @@ class MailController extends AbstractController
             return new JsonResponse('', Response::HTTP_BAD_REQUEST, [], true);
         }
     }
+    
+    public function emailAction(): JsonResponse
+    {
+        $mails = $this->em->getRepository(Mail::class)->findBy(['account_id' => $this->account_id], ['datetime' => 'DESC']);
+        $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
+        
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
 
     public function inboxAction(): JsonResponse
     {
@@ -107,7 +116,7 @@ class MailController extends AbstractController
     
     public function trashAction(): JsonResponse
     {
-        $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 1, 'account_id' => $this->account_id, 'status' => 2], ['datetime' => 'DESC']);
+        $mails = $this->em->getRepository(Mail::class)->findBy(['account_id' => $this->account_id, 'status' => 2], ['datetime' => 'DESC']);
         $data = $this->serializer->serialize($mails, JsonEncoder::FORMAT);
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);

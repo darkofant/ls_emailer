@@ -1,6 +1,10 @@
 index:
     path: /
     controller: App\Controller\IndexController::indexAction
+
+list:
+    path: /api/mails/list
+    controller: App\Controller\MailController::emailAction    
     
 inbox:
     path: /api/mails/inbox
@@ -12,4 +16,8 @@ outbox:
 
 trash:
     path: /api/mails/trash
-    controller: App\Controller\MailController::trashAction               
+    controller: App\Controller\MailController::trashAction     
+    
+create:
+    path: /api/mails/create
+    controller: App\Controller\MailController::createAction      

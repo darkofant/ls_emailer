@@ -14,7 +14,6 @@
     import { eventBus } from '../index';
     import Inbox from './Inbox.vue';
     import Sent from './Sent.vue';
-    import Important from './Important.vue';
     import Trash from './Trash.vue';
     import ViewMessage from './ViewMessage.vue';
 
@@ -62,7 +61,6 @@
         components: {
             appInbox: Inbox,
             appSent: Sent,
-            appImportant: Important,
             appTrash: Trash,
             appViewMessage: ViewMessage
         }

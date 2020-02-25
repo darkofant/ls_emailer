@@ -16,8 +16,8 @@
         },
         computed: {
             sentMessages() {
-                return this.data.messages.filter(function(message) {
-                    return (message.type == 'outgoing' && !message.isDeleted);
+                return this.$store.getters["mail/mails"].filter(function(message) {
+                    return (message.type == 1 && !message.status == 2);
                 });
             }
         },
