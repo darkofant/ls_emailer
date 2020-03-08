@@ -39,7 +39,7 @@ class Mail
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Account", inversedBy="mails")
      */
-    private $account;
+    public $account;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)

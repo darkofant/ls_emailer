@@ -24,7 +24,7 @@ final class IndexController extends AbstractController
     
     public function indexAction(): Response
     {
-        $this->session->set('account_id', '1');
+        $this->session->set('account_id', 1);
         return $this->render('base.html.twig', []);
     }
 }

@@ -20,6 +20,13 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-lg-2 control-label" for="subject">Empfänger</label>
+                                <div class="col-lg-10">
+                                    <input type="text" v-model="message.recipients" id="rescipients" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-lg-2 control-label" for="message">Nachricht</label>
                                 <div class="col-lg-10">
                                     <textarea v-model="message.content" rows="10" cols="30" class="form-control" id="message"></textarea>
@@ -48,7 +55,8 @@
             return {
                 message: {
                     subject: '',
-                    content: ''
+                    content: '',
+                    recipients: '',
                 }
             };
         },
@@ -56,7 +64,8 @@
             sendMessage() {
                 eventBus.$emit('sentMessage', {
                         subject: this.message.subject,
-                        text: this.message.content            
+                        text: this.message.content,  
+                        recipients: this.message.recipients,
                 });
             }
         }

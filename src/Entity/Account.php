@@ -67,14 +67,6 @@ class Account
         return $this;
     }
 
-    /**
-     * @return Collection|Mail[]
-     */
-    public function getMails(): Collection
-    {
-        return $this->mails;
-    }
-
     public function addMail(Mail $mail): self
     {
         if (!$this->mails->contains($mail)) {

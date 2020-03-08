@@ -2,9 +2,7 @@ import axios from "axios";
 
 export default {
   create(data) {
-    return axios.post("/api/mails/create", {
-      data: data
-    });
+    return axios.post("/api/mails/create", data);
   },
   getAll() {
     return axios.get("/api/mails/list");

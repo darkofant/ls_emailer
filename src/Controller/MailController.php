@@ -15,60 +15,66 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Psr\Log\LoggerInterface;
+
 
 class MailController extends AbstractController
 {
-
+    
     /** @var EntityManagerInterface */
     private $em;
     
     /** @var SerializerInterface */
     private $serializer;
-
-
-    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer, SessionInterface $session)
+    private $logger;
+    
+    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer, SessionInterface $session,LoggerInterface $logger)
     {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->session = $session;
         $this->account_id = $this->session->get('account_id');
+        $this->logger = $logger;
     }
     
     /**
      * @throws BadRequestHttpException
      */
-
+    
+    
     public function createAction(Request $request): JsonResponse
     {
-
-        $data = json_decode($request->getContent(), true);
+        $this->logger->info($request);
+        $json = json_decode($request->getContent(), true);
+        $data = $json['data'];
         
-        $sender = $data['sender'];
         $recipients = $data['recipients'];
-        $subject = $data['subject'];
-        $text = $data['text'];
-        $datetime = $_SERVER['REQUEST_TIME'];
+        $subject =  $data['subject'];
+        $text =  $data['text'];
+        $datetime = date_create();
+        date_timestamp_set($datetime, $_SERVER['REQUEST_TIME'] );
         
-        $r_account = $this->em->getRepository(Account::class)->findBy(['email_address' => $recipients])[0];   
-        
-        
+        $r_account = $this->em->getRepository(Account::class)->findBy(['email_address' => $recipients]);
+        $s_account = $this->em->getRepository(Account::class)->find($this->account_id);
+        $this->logger->info($r_account[0] ->getId());
         if ($r_account) {
             
             $outgoingMail = new Mail();
-            $outgoingMail -> setSender($sender);
+            $outgoingMail -> setSender($s_account->getEmailAddress());
             $outgoingMail -> setRecipients($recipients);
             $outgoingMail -> setSubject($subject);
-            $outgoingMail -> setText($text); 
-            $outgoingMail -> setDatetime($datetime); 
-            $outgoingMail -> setStatus(1); 
-            $outgoingMail -> setType(1); 
+            $outgoingMail -> setText($text);
+            $outgoingMail -> setDatetime($datetime);
+            $outgoingMail -> setStatus(1);
+            $outgoingMail -> setType(1);
             $outgoingMail -> setAccountId($this->account_id);
+            $outgoingMail -> account = $this->em->getReference(Account::class, $this -> account_id);
             
             $this->em->persist($outgoingMail);
             $this->em->flush();
             
             $mail = new Mail();
-            $mail -> setSender($sender);
+            $mail -> setSender($s_account->getEmailAddress());
             $mail -> setRecipients($recipients);
             $mail -> setSubject($subject);
             $mail -> setText($text);
@@ -76,14 +82,15 @@ class MailController extends AbstractController
             $mail -> setStatus(0);
             $mail -> setType(0);
             
-            $mail -> setAccountId($r_account.id);
+            $mail -> setAccountId($r_account[0] ->getId());
+            $mail -> account = $this->em->getReference(Account::class, $r_account[0] ->getId());
             
             $this->em->persist($mail);
             $this->em->flush();
             
             
             $data = $this->serializer->serialize($outgoingMail, JsonEncoder::FORMAT);
-        
+            
             return new JsonResponse($data, Response::HTTP_CREATED, [], true);
         }else {
             return new JsonResponse('', Response::HTTP_BAD_REQUEST, [], true);
@@ -97,7 +104,7 @@ class MailController extends AbstractController
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
-
+    
     public function inboxAction(): JsonResponse
     {
         $mails = $this->em->getRepository(Mail::class)->findBy(['type' => 0, 'account_id' => $this->account_id, 'status' => [0,1]], ['datetime' => 'DESC']);
@@ -121,16 +128,16 @@ class MailController extends AbstractController
         
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
-
-
+    
+    
     public function newMail()
     {
-     
+        
     }
     
     public function replyMail()
     {
-     
+        
     }
     
     public function sendMail(): Response
@@ -140,7 +147,7 @@ class MailController extends AbstractController
     
     public function show()
     {
- 
+        
     }
     
 }

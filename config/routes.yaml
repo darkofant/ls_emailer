@@ -20,4 +20,8 @@ trash:
     
 create:
     path: /api/mails/create
-    controller: App\Controller\MailController::createAction      
+    controller: App\Controller\MailController::createAction   
+    
+account:
+    path: /api/account/data
+    controller: App\Controller\AccountController::accountAction      
