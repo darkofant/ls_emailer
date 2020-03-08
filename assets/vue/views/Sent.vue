@@ -17,7 +17,7 @@
         computed: {
             sentMessages() {
                 return this.$store.getters["mail/mails"].filter(function(message) {
-                    return (message.type == 1 && !message.status == 2);
+                    return (message.type == 1 && message.type != 2);
                 });
             }
         },
